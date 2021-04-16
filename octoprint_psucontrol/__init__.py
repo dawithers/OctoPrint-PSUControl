@@ -455,7 +455,7 @@ class PSUControl(octoprint.plugin.StartupPlugin,
                 self._logger.debug("On system command returned: {}".format(r))
             elif self.config['switchingMethod'] == 'GPIO':
                 self._logger.debug("Switching PSU On Using GPIO: {}".format(self.config['onoffGPIOPin']))
-                pin_output = 1 ^ self.config['invertonoffGPIOPin']
+                pin_output = bool(1 ^ self.config['invertonoffGPIOPin'])
 
                 try:
                     self._configuredGPIOPins['switch'].write(pin_output)
@@ -512,7 +512,7 @@ class PSUControl(octoprint.plugin.StartupPlugin,
                 self._logger.debug("Off system command returned: {}".format(r))
             elif self.config['switchingMethod'] == 'GPIO':
                 self._logger.debug("Switching PSU Off Using GPIO: {}".format(self.config['onoffGPIOPin']))
-                pin_output = 0 ^ self.config['invertonoffGPIOPin']
+                pin_output = bool(0 ^ self.config['invertonoffGPIOPin'])
 
                 try:
                     self._configuredGPIOPins['switch'].write(pin_output)
