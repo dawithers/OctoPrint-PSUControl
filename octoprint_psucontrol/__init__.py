@@ -162,13 +162,16 @@ class PSUControl(octoprint.plugin.StartupPlugin,
             self._logger.info("Using GPIO for On/Off")
             self._logger.info("Configuring GPIO for pin {}".format(self.config['onoffGPIOPin']))
 
+            if not self.config['invertonoffGPIOPin']:
+                initial_output = 'low'
+            else:
+                initial_output = 'high'
+
             try:
-                pin = periphery.GPIO(self.config['GPIODevice'], self.config['onoffGPIOPin'], 'out')
+                pin = periphery.GPIO(self.config['GPIODevice'], self.config['onoffGPIOPin'], initial_output)
                 self._configuredGPIOPins['switch'] = pin
             except Exception as e:
                 self._logger.error(e)
-            else:
-                pin.write(not self.config['invertonoffGPIOPin'])
 
         if self.config['sensingMethod'] == 'GPIO':
             self._logger.info("Using GPIO sensing to determine PSU on/off state.")
