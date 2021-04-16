@@ -55,7 +55,7 @@ $(function() {
                     self.psu_indicator.removeClass("on").addClass("off");
                 }   
             });
-            
+/*
             $.ajax({
                 url: API_BASEURL + "plugin/psucontrol",
                 type: "POST",
@@ -67,6 +67,7 @@ $(function() {
             }).done(function(data) {
                 self.isPSUOn(data.isPSUOn);
             });
+*/
         }
 
         self.onDataUpdaterPluginMessage = function(plugin, data) {
