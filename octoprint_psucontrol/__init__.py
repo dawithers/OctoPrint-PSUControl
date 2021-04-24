@@ -16,6 +16,9 @@ from flask_babel import gettext
 import periphery
 import platform
 from octoprint.util import fqfn
+from octoprint.settings import valid_boolean_trues
+# TODO: Specific reason for _flask alias?
+import flask as _flask
 
 try:
     from octoprint.access.permissions import Permissions
@@ -819,6 +822,18 @@ class PSUControl(octoprint.plugin.StartupPlugin,
         ]
 
 
+    def hook_before_request(self, *args, **kwargs):
+        return [self.turn_on_before_during_upload]
+
+
+    def turn_on_before_during_upload(self):
+        if not self.isPSUOn:
+            if (_flask.request.path.startswith('/api/files/') and
+                _flask.request.method == 'POST' and
+                _flask.request.values.get('print', 'false') in valid_boolean_trues):
+                self.turn_psu_on()
+
+
     def cli_commands(self, cli_group, pass_octoprint_ctx, *args, **kwargs):
         # Requires OctoPrint >= 1.3.5
         import click
@@ -910,7 +925,8 @@ def __plugin_load__():
         "octoprint.plugin.softwareupdate.check_config": __plugin_implementation__.get_update_information,
         "octoprint.events.register_custom_events": __plugin_implementation__.register_custom_events,
         "octoprint.access.permissions": __plugin_implementation__.get_additional_permissions,
-        "octoprint.cli.commands": __plugin_implementation__.cli_commands
+        "octoprint.cli.commands": __plugin_implementation__.cli_commands,
+        "octoprint.server.api.before_request": __plugin_implementation__.hook_before_request,
     }
 
     global __plugin_helpers__
